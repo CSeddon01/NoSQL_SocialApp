@@ -1,3 +1,3 @@
 # NoSQL_SocialApp
 
-npm install mongoose
+npm install mongoose, nosql, express
