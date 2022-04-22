@@ -1,34 +1,66 @@
-const { Schema, model } = require('mongoose');
-// const dateFormat = require('../utils/dateFormat');
+const { Schema, model, Types } = require('mongoose');
+const dateFormat = require('../utils/dateFormat');
+
+// This will not be a model, but rather will be used as the reaction field's subdocument schema in the Thought model.
+const ReactionSchema = new Schema({
+    reactionId: {
+        type: Schema.Type.ObjectId,
+        default: () => new Types.ObjectId()
+    },
+    reationBody: {
+        type: String,
+        required: true,
+        maxLength: 280
+    },
+    username: {
+        type: String,
+        required: true,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        get: createdAtVal = dateFormat(createdAtVal)
+    },
+},
+    {
+        toJSON: {
+            virtuals: true,
+            getters: true
+        },
+        id: false
+    }
+);
 
 const ThoughtsSchema = new Schema({
     thoughtText: {
         type: String,
-        required: "Please enter a thought",
-        minLength: 280
+        min: [1, 'Please tell us more of your thoughts on this'],
+        max: 280
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        get: createdAtVal = dateFormat(createdAtVal)
     },
     username: {
         type: String,
         required: "Please enter your name"
     },
-    // reactions: [ReactionsSchema]
+    //Array of nested documents created with the reactionSchema
+    reaction: [ReactionSchema]
 },
-{ 
-    toJSON: {
-        virtuals: true, 
-        getters: true
-    },
-    id: false
-}
+    {
+        toJSON: {
+            virtuals: true,
+            getters: true
+        },
+        id: false
+    }
 );
 
-// ThoughtsSchema.virtual('reactionCount').get(function() {
-//     return this.reactions.length;
-// })
+ThoughtsSchema.virtual('reactionCount').get(function () {
+    return this.reaction.length;
+});
 
 const Thoughts = model('Thoughts', ThoughtsSchema);
 

@@ -13,6 +13,12 @@ const userController = {
     // get one user by _id
     getUserById({ params }, res) {
         User.findOne({ _id: params.id })
+        .populate({ 
+            path: "thoughts",
+        })
+        .populate({
+            path: "friends",
+        })
         .select('-__v')
         .then(dbUserData => res.json(dbUserData))
         .catch(err => {
@@ -41,6 +47,26 @@ const userController = {
     //delete the user
     deleteUser({ params }, res) {
         User.findOneAndDelete({ _id: params.id })
+        .then(dbUserData => res.json(dbUserData))
+        .catch(err => {
+            console.log(err);
+            res.sendStatus(400);
+          });
+    },
+    addFriend({  params }, res) {
+        User.findOneAndUpdate({ _id: params.userid }),
+        { $push: { friends: params.friendsId }},
+        { new: true, runValidators: true}
+        .then(dbUserData => res.json(dbUserData))
+        .catch(err => {
+            console.log(err);
+            res.sendStatus(400);
+          });
+    },
+    deleteFriend({ params }, res) {
+        User.findOneAndDelete({ _id: params.userid }),
+        { $pull: { friends: params.friendsId }},
+        { new: true, runValidators: true}
         .then(dbUserData => res.json(dbUserData))
         .catch(err => {
             console.log(err);
