@@ -21,11 +21,11 @@ const thoughtsContoller = {
           });
     },
 // add new thought
-createThoughts({ params, body}, res) {
+createThoughts({ body}, res) {
     Thoughts.create(body)
     .then(({ _id }) => {
         return User.findOneAndUpdate(
-          { _id: params.userId },
+          { _id: body.userId },
           { $push: { thoughts: _id } },
           { new: true }
         );
@@ -82,7 +82,7 @@ createThoughts({ params, body}, res) {
 addReaction({ params, body }, res) {
   Thoughts.findOneAndUpdate(
     { _id: params.thoughtsId }, 
-    { $push: { reactions: body } },
+    { $push: { reaction: body } },
     { new: true, runValidators: true })
     .then(dbThoughtsData => {
       if (!dbThoughtsData) {
@@ -94,11 +94,11 @@ addReaction({ params, body }, res) {
     .catch(err => res.json(err));
 },
   // delete a reaction
-  deleteReaction({ params, body }, res) {
-    Thoughts.findOneAndUpdate(
-      { _id: params.thoughtId }, 
-      { $pull: { reactions: body } },
-      { new: true, runValidators: true })
+  deleteReaction({ params }, res) {
+    Thoughts.findOneAndDelete(
+      { _id: params.thoughtsId }, 
+      { $pull: { reaction: { _id: reaction.id } } },
+      { new: true })
       .then(dbThoughtsData => {
         if (!dbThoughtsData) {
           res.status(404).json({ message: 'No thought found with this id!' });

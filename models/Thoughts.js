@@ -4,7 +4,7 @@ const dateFormat = require('../utils/dateFormat');
 // This will not be a model, but rather will be used as the reaction field's subdocument schema in the Thought model.
 const ReactionSchema = new Schema({
     reactionId: {
-        type: Schema.Type.ObjectId,
+        type: Schema.Types.ObjectId,
         default: () => new Types.ObjectId()
     },
     reationBody: {
@@ -19,7 +19,7 @@ const ReactionSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-        get: createdAtVal = dateFormat(createdAtVal)
+        get: createdAtVal => dateFormat(createdAtVal)
     },
 },
     {
@@ -40,7 +40,7 @@ const ThoughtsSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-        get: createdAtVal = dateFormat(createdAtVal)
+        get: createdAtVal => dateFormat(createdAtVal)
     },
     username: {
         type: String,
