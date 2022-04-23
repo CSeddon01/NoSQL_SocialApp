@@ -34,8 +34,8 @@ const ReactionSchema = new Schema({
 const ThoughtsSchema = new Schema({
     thoughtText: {
         type: String,
-        min: [1, 'Please tell us more of your thoughts on this'],
-        max: 280
+        minlength: [1, 'Please tell us more of your thoughts on this'],
+        maxlength: 280
     },
     createdAt: {
         type: Date,
